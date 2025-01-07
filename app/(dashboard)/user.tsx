@@ -1,5 +1,4 @@
 import { Button } from '@/components/ui/button';
-import { auth, signOut } from '@/lib/auth';
 import Image from 'next/image';
 import {
   DropdownMenu,
@@ -10,11 +9,10 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import Link from 'next/link';
+import { UserInfo } from 'os';
 
 export async function User() {
-  let session = await auth();
-  let user = session?.user;
-
+  const user: any = {};
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -43,7 +41,7 @@ export async function User() {
             <form
               action={async () => {
                 'use server';
-                await signOut();
+                // await signOut();
               }}
             >
               <button type="submit">Sign Out</button>
