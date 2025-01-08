@@ -1,17 +1,20 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { File, PlusCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { ProductsTable } from './products-table';
+import { JobsTable } from './jobs-table';
+import { fetchPaginatedJobs } from 'app/api/jobs';
 
-export default async function ProductsPage(props: {
-  searchParams: Promise<{ q: string; offset: string }>;
+export default async function JobsPage(props: {
+  searchParams: Promise<{ q?: string; page?: string; limit?: string }>;
 }) {
+  // Await the searchParams object
   const searchParams = await props.searchParams;
   const search = searchParams.q ?? '';
-  const offset = searchParams.offset ?? 0;
-  const products: any = [];
-  const newOffset = 0;
-  const totalProducts = 0;
+  const page = parseInt(searchParams.page ?? '1', 10);
+  const jobsPerPage = 10;
+
+  const jobResults = await fetchPaginatedJobs(page, jobsPerPage, search);
+  const { jobs, total } = jobResults;
 
   return (
     <Tabs defaultValue="all">
@@ -34,16 +37,17 @@ export default async function ProductsPage(props: {
           <Button size="sm" className="h-8 gap-1">
             <PlusCircle className="h-3.5 w-3.5" />
             <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-              Add Product
+              Add Job
             </span>
           </Button>
         </div>
       </div>
       <TabsContent value="all">
-        <ProductsTable
-          products={products}
-          offset={newOffset ?? 0}
-          totalProducts={totalProducts}
+        <JobsTable
+          jobs={jobs}
+          totalJobs={total}
+          page={page}
+          jobsPerPage={jobsPerPage}
         />
       </TabsContent>
     </Tabs>
