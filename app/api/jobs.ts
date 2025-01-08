@@ -20,21 +20,23 @@ export interface PaginatedJobsResponse {
   pages: number;
 }
 
-// Fetch paginated jobs
 export async function fetchPaginatedJobs(
   page: number,
   limit: number,
+  search: string = '',
+  category: string | null = null,
   authToken?: string
 ): Promise<any> {
   try {
     const response: AxiosResponse = await apiClient.get('/jobs', {
-      params: { page, limit },
+      params: { page, limit, search, category },
       headers: createHeaders(authToken)
     });
     return response.data;
-  } catch (error) {
-    console.error('Failed to fetch paginated jobs:', error);
-    throw error;
+  } catch (error: any) {
+    console.log('error: ', error);
+
+    return { jobs: [], total: 0 };
   }
 }
 
