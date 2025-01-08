@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -10,31 +9,38 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { MoreHorizontal } from 'lucide-react';
 import { TableCell, TableRow } from '@/components/ui/table';
-import { deleteProduct } from './actions';
+import dayjs from 'dayjs';
+import { CategoryNames } from 'constants/categories';
+import { Categories } from 'enums/categories';
 
-export function Product({ product }: { product: any }) {
+export function Job({ job }: { job: any }) {
   return (
     <TableRow>
-      <TableCell className="hidden sm:table-cell">
-        <Image
-          alt="Product image"
-          className="aspect-square rounded-md object-cover"
-          height="64"
-          src={product.imageUrl}
-          width="64"
-        />
-      </TableCell>
-      <TableCell className="font-medium">{product.name}</TableCell>
-      <TableCell>
-        <Badge variant="outline" className="capitalize">
-          {product.status}
-        </Badge>
-      </TableCell>
-      <TableCell className="hidden md:table-cell">{`$${product.price}`}</TableCell>
-      <TableCell className="hidden md:table-cell">{product.stock}</TableCell>
+      <TableCell className="font-medium">{job.title}</TableCell>
+      <TableCell>{job.company}</TableCell>
       <TableCell className="hidden md:table-cell">
-        {product.availableAt.toLocaleDateString('en-US')}
+        <Badge variant="outline">{job.location || 'N/A'}</Badge>
       </TableCell>
+      <TableCell className="hidden sm:table-cell">
+        <a
+          href={job.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-600 hover:underline"
+        >
+          Go to Vacancy
+        </a>
+      </TableCell>
+      <TableCell className="hidden md:table-cell">
+        {CategoryNames[job.category_id as Categories]}
+      </TableCell>
+      <TableCell className="hidden md:table-cell">
+        {dayjs(job.posted_at).format('MMMM D, YYYY')}
+      </TableCell>
+      <TableCell className="hidden md:table-cell">
+        {dayjs(job.valid_until).format('MMMM D, YYYY')}
+      </TableCell>
+
       <TableCell>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -47,8 +53,10 @@ export function Product({ product }: { product: any }) {
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem>Edit</DropdownMenuItem>
             <DropdownMenuItem>
-              <form action={deleteProduct}>
-                <button type="submit">Delete</button>
+              <form method="POST" action={`/api/jobs/delete/${job.id}`}>
+                <button type="submit" className="text-red-600">
+                  Delete
+                </button>
               </form>
             </DropdownMenuItem>
           </DropdownMenuContent>
